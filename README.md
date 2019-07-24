@@ -56,16 +56,21 @@ template_role/
 
 ### [使い方]
 ここではtemplate_roleをコピーしhttpdのrole作成する例を紹介します
+
+$ roles/template_base_role roles/httpd/
+
+$ roles/httpd/tasks/install.yml
 ```
-$ tasks/install.yml
 ---
 - name: Install Package
-  package:
+  yum:
     name: httpd
-    state: presented
+    state: present
 ---
+```
 
-$ tasks/setup.yml
+$ roles/httpd/tasks/setup.yml
+```
 ---
 - name: Setup Config
   template:
@@ -74,8 +79,13 @@ $ tasks/setup.yml
     owner: apache
     group: apache
     mode: 0644
-  notify: "Service Reloaded {{ daemon_name }}"
+  notify: "Service Reloaded {{ NAME_SERVICE }}"
 ---
+```
+
+$ roles/httpd/vars/main.yml
+```
+NAME_SERVICE: httpd
 ```
 
 # Discription Advanced Role
