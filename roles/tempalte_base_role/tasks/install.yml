@@ -1,0 +1,5 @@
+---
+- name: Install Package
+  yum:
+    name: sample
+    state: present

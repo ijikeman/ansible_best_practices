@@ -1,0 +1,6 @@
+---
+- name: Setup Config
+  template:
+    src: sample.conf.j2
+    dest: /tmp/sample.conf
+  notify: "Service Restarted {{ NAME_SERVICE }}"

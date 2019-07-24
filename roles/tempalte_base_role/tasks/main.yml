@@ -1,0 +1,6 @@
+---
+- name: Include install.yml
+  include: install.yml
+
+- name: Include setup.yml
+  include: setup.yml
