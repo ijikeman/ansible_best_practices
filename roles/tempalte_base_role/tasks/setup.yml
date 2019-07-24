@@ -3,4 +3,7 @@
   template:
     src: sample.conf.j2
     dest: /tmp/sample.conf
+    owner: 'root'
+    group: 'root'
+    mode: 0644
   notify: "Service Restarted {{ NAME_SERVICE }}"
