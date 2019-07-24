@@ -4,3 +4,9 @@
 
 - name: Include setup.yml
   include: setup.yml
+
+- name: Start Daemon
+  service:
+    name: "{{ NAME_SERVICE }}"
+    state: started
+    enabled: yes
