@@ -7,6 +7,6 @@
 
 - name: Start Daemon
   service:
-    name: "{{ NAME_SERVICE }}"
+    name: "{{ NAME_DAEMON }}"
     state: started
     enabled: yes
