@@ -1,0 +1,9 @@
+---
+- name: Setup Config
+  template:
+    src: sample.conf.j2
+    dest: /tmp/sample.conf
+    owner: 'root'
+    group: 'root'
+    mode: 0644
+  notify: "Service Started {{ NAME_DAEMON }}"

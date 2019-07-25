@@ -1,0 +1,3 @@
+---
+- name: Include per 'os_family' and 'distribution_major_version'
+  include: setup_{{ ansible_os_family }}.yml

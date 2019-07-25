@@ -1,0 +1,22 @@
+---
+- name: Service Started {{ NAME_DAEMON }}
+  service:
+    name: "{{ NAME_DAEMON }}"
+    state: started
+    enabled: yes
+
+- name: Service Restarted {{ NAME_DAEMON }}
+  service:
+    name: "{{ NAME_DAEMON }}"
+    state: restarted
+
+- name: Service Reloaded {{ NAME_DAEMON }}
+  service:
+    name: "{{ NAME_DAEMON }}"
+    state: reloaded
+
+- name: Service Stopped {{ NAME_DAEMON }}
+  service:
+    name: "{{ NAME_DAEMON }}"
+    state: stopped
+    enabled: no

@@ -1,0 +1,5 @@
+---
+- name: Install Package
+  apt:
+    name: sample
+    state: present
