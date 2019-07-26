@@ -1,7 +1,6 @@
 # Ansible Best Practiceを元によりより汎用性を高めた構成で作っております
 # コーディング規約
 
-
 # Discription Directories
 ```
 group_vars/
@@ -39,6 +38,7 @@ ansible.cfg - Ansible設定ファイル
 ### [説明]
 - OSの種別やバージョンを考慮しない基本的な構成となります。
 - このテンプレートはDaemonを扱うロールとなります
+
 ### [構成]
 ```
 template_role/
@@ -55,7 +55,9 @@ template_role/
 ```
 
 ### [使い方]
-ここではtemplate_roleをコピーしhttpdのrole作成する例を紹介します
+ここではtemplateをコピーしhttpdのrole作成する例を紹介します
+
+- インストールするパッケージを変更
 ```
 $ tasks/install.yml
 ---
@@ -64,7 +66,10 @@ $ tasks/install.yml
     name: httpd
     state: presented
 ---
+```
 
+- 設定ファイル設置時にReload実行されるように変更
+```
 $ tasks/setup.yml
 ---
 - name: Setup Config
@@ -74,7 +79,15 @@ $ tasks/setup.yml
     owner: apache
     group: apache
     mode: 0644
-  notify: "Service Reloaded {{ daemon_name }}"
+  notify: "Service Reloaded {{ NAME_DAEMON }}"
+---
+```
+
+- 操作するサービス名を指定
+```
+$ vars/main.yml
+---
+NAME_DAEMON: httpd
 ---
 ```
 
@@ -96,11 +109,13 @@ advanced_template_role/
     setup_RedHat.yml - RedHat6系の場合のsetup処理を記載します
     setup_Debian.yml - RedHat7系の場合のsetup処理を記載します
   templates/
+    sample.conf.RedHat.j2 - 各環境に応じた設定ファイルを設置
+    sample.conf.Debian.j2
   vars/
     main.yml
-    RedHat_6.yml - RedHat6系の場合のデーモン名(サービス名)を記載します
-    RedHat_7.yml - RedHat7系の場合のデーモン名(サービス名)を記載します
-    Debian.yml - Debian系の場合のデーモン名(サービス名)を記載します
+    RedHat_6.yml - RedHat6系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
+    RedHat_7.yml - RedHat7系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
+    Debian.yml - Debian系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
 ```
 
 # Discription Vars
@@ -147,4 +162,23 @@ varsは様々な箇所で記載することができますが、反面適材適�
 
 [記載例]
 - ZABBIXサーバのIP IPADDRESS_ZABBIX_SERVER
+```
+
+#### 優先度低4. inventories/[STAGE]/group_vars/[HOSTGROUP].yml
+```
+[判断基準]
+- 全ての環境(ステージ)に適用: ×(特定のステージに対して適用)
+- 全てのホストに対して適用: ×(特定のホスト群に対して適用)
+
+[記載例]
+- ZABBIXサーバのIP IPADDRESS_ZABBIX_SERVER
+```
+
+#### 優先度低5. ホスト個別の値について
+```
+各ステージ且つ各ホストグループよりもさらに細かい、各ホスト個別の値について方法は複数あるので紹介。
+- 1. Dynamic Inventoryを利用する
+- 2. 各優先度4のvarsファイル内でhashや配列などで管理する
+```
+例:
 ```
