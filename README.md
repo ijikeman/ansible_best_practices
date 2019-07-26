@@ -59,18 +59,18 @@ template_role/
 
 - インストールするパッケージを変更
 ```
-$ tasks/install.yml
+$ roles/httpd/tasks/install.yml
 ---
 - name: Install Package
-  package:
+  yum:
     name: httpd
-    state: presented
+    state: present
 ---
 ```
 
 - 設定ファイル設置時にReload実行されるように変更
 ```
-$ tasks/setup.yml
+$ roles/httpd/tasks/setup.yml
 ---
 - name: Setup Config
   template:
@@ -85,7 +85,7 @@ $ tasks/setup.yml
 
 - 操作するサービス名を指定
 ```
-$ vars/main.yml
+$ roles/httpd/vars/main.yml
 ---
 NAME_DAEMON: httpd
 ---
