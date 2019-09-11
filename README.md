@@ -4,18 +4,18 @@
 # Discription Directories
 ```
 group_vars/
-  all.yml ... 優先度低1varsファイル
-  [HOSTGROUP].yml ... 優先度低2varsファイル
+  all.yml ... 優先度低1 varsファイル
+  [HOSTGROUP].yml ... 優先度低2 varsファイル
   ...
 
 inventories/ - インベントリ(サーバリスト)と環境毎の設定値
   production/ - 本番環境
     hosts - インベントリファイル
     group_vars/
-      all.yml - 優先度低3varsファイル
-      [HOSTGROUP].yml - 優先度低4varsファイル
+      all.yml - 優先度低3 varsファイル
+      [HOSTGROUP].yml - 優先度低4 varsファイル
   development/ - 開発環境
-
+  docker/ - テスト用Docker環境
 roles/
   template_role/
   common_tasks/ - 他のロールから呼ばれる汎用的なタスクリスト
@@ -23,13 +23,12 @@ roles/
   [role_name]/ - 各種ロール。フォルダ名はミドルウェア名単位が好ましい
     defaults/ - 使わない(上書き可能なデフォルトの値)
     files/ - タスク内で使用するシェルなど
-    handlers/ - notifyで呼び出す処理(サービスの起動・停止・再起動処理)
+    handlers/ - notifyで呼び出す処理
     meta/ - 各roleとの依存関係の記述
     tasks/ - タスク一覧
       main.yml - roleで呼ばれるタスク
       install.yml - インストール処理 main.ymlからincludeとして呼ばれる
       setup.yml - 設定処理 main.ymlからincludeとして呼ばれる
-
 ansible.cfg - Ansible設定ファイル
 [playbook].yml - 各Playbook
 ```
@@ -105,17 +104,62 @@ advanced_template_role/
     install.yml - 各環境に応じたinstall_.ymlをincludeしています
     install_RedHat_6.yml - RedHat6系の場合のinstall処理を記載します
     install_RedHat_7.yml - RedHat7系の場合のinstall処理を記載します
+    install_Debian.yml - Debian系の場合のinstall処理を記載します
     setup.yml - 各環境に応じたsetup_.ymlをincludeしています
-    setup_RedHat.yml - RedHat6系の場合のsetup処理を記載します
-    setup_Debian.yml - RedHat7系の場合のsetup処理を記載します
+    setup_RedHat_6.yml - RedHat6系の場合のsetup処理を記載します
+    setup_RedHat_6.yml - RedHat7系の場合のsetup処理を記載します
+    setup_Debian.yml - Debian系の場合のsetup処理を記載します
   templates/
-    sample.conf.RedHat.j2 - 各環境に応じた設定ファイルを設置
-    sample.conf.Debian.j2
+    sample.conf.RedHat_6.j2 - 各環境に応じた設定ファイルを設置
+    sample.conf.RedHat_6.j2
   vars/
     main.yml
     RedHat_6.yml - RedHat6系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
     RedHat_7.yml - RedHat7系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
     Debian.yml - Debian系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
+```
+
+ここではtemplateをコピーしhttpdのrole作成する例を紹介します
+
+- インストールするパッケージを変更
+```
+$ roles/httpd/tasks/install_RedHat_6.yml
+---
+- name: Install Package
+  yum:
+    name: httpd
+    state: present
+---
+```
+
+- 設定ファイル設置時にReload実行されるように変更
+```
+$ roles/httpd/tasks/setup_RedHat_6.yml
+---
+- name: Setup Config
+  template:
+    src: httpd.conf.j2
+    dest: /etc/httpd/conf/httpd.conf
+    owner: apache
+    group: apache
+    mode: 0644
+  notify: "Service Reloaded {{ NAME_DAEMON }}"
+---
+```
+
+- 操作するサービス名を指定
+```
+$ roles/httpd/vars/RedHat_6.yml
+---
+NAME_DAEMON: httpd
+---
+```
+
+```
+$ roles/httpd/vars/Debian.yml
+---
+NAME_DAEMON: apache2
+---
 ```
 
 # Discription Vars
