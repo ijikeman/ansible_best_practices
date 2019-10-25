@@ -4,31 +4,32 @@
 # Discription Directories
 ```
 group_vars/
-  all.yml ... 優先度低1 varsファイル
-  [HOSTGROUP].yml ... 優先度低2 varsファイル
+  all.yml ... 優先度低1 varsファイル(命名規則: COMMON_*)
+  [HOSTGROUP].yml ... 優先度低2 varsファイル(命名規則: COMMON_HOSTGROUP_*)
   ...
 
 inventories/ - インベントリ(サーバリスト)と環境毎の設定値
   production/ - 本番環境
     hosts - インベントリファイル
     group_vars/
-      all.yml - 優先度低3 varsファイル
-      [HOSTGROUP].yml - 優先度低4 varsファイル
+      all.yml - 優先度低3 varsファイル(命名規則: INVENTORY_*)
+      [HOSTGROUP].yml - 優先度低4 varsファイル(命名規則: INVENTORY_HOSTGROUP_*)
+  staging/ - ステージング環境
   development/ - 開発環境
   docker/ - テスト用Docker環境
 roles/
-  template_role/
   common_tasks/ - 他のロールから呼ばれる汎用的なタスクリスト
   common/ - 全てのホストで共通で実行するタスク
   [role_name]/ - 各種ロール。フォルダ名はミドルウェア名単位が好ましい
+  template_role/ - テンプレートロール
     defaults/ - 使わない(上書き可能なデフォルトの値)
     files/ - タスク内で使用するシェルなど
-    handlers/ - notifyで呼び出す処理
+    handlers/ - notifyで呼び出す処理を記載
     meta/ - 各roleとの依存関係の記述
     tasks/ - タスク一覧
-      main.yml - roleで呼ばれるタスク
-      install.yml - インストール処理 main.ymlからincludeとして呼ばれる
-      setup.yml - 設定処理 main.ymlからincludeとして呼ばれる
+      main.yml - roleを指定するとデフォルトで呼ばれるタスク
+      install.yml - インストール処理(main.ymlからincludeとして呼ばれる)
+      setup.yml - 設定処理(main.ymlからincludeとして呼ばれる)
 ansible.cfg - Ansible設定ファイル
 [playbook].yml - 各Playbook
 ```
@@ -54,16 +55,14 @@ template_role/
 ```
 
 ### [使い方]
-ここではtemplateをコピーしhttpdのrole作成する例を紹介します
+ここではtemplate_roleをコピーしhttpdのrole作成する例を紹介します
 
-- インストールするパッケージを変更
+- インストールするパッケージと操作するサービス名を指定
 ```
-$ roles/httpd/tasks/install.yml
+$ roles/httpd/vars/main.yml
 ---
-- name: Install Package
-  yum:
-    name: httpd
-    state: present
+NAME_DAEMON: 'httpd'
+NAME_PACKAGE: 'httpd'
 ---
 ```
 
@@ -78,15 +77,7 @@ $ roles/httpd/tasks/setup.yml
     owner: apache
     group: apache
     mode: 0644
-  notify: "Service Reloaded {{ NAME_DAEMON }}"
----
-```
-
-- 操作するサービス名を指定
-```
-$ roles/httpd/vars/main.yml
----
-NAME_DAEMON: httpd
+  notify: "{{ NAME_SERVICE_MANAGER }} Restarted {{ NAME_DAEMON }}"
 ---
 ```
 
@@ -104,31 +95,38 @@ advanced_template_role/
     install.yml - 各環境に応じたinstall_.ymlをincludeしています
     install_RedHat_6.yml - RedHat6系の場合のinstall処理を記載します
     install_RedHat_7.yml - RedHat7系の場合のinstall処理を記載します
-    install_Debian.yml - Debian系の場合のinstall処理を記載します
+    install_Debian_6.yml - Debian系の場合のinstall処理を記載します
     setup.yml - 各環境に応じたsetup_.ymlをincludeしています
     setup_RedHat_6.yml - RedHat6系の場合のsetup処理を記載します
-    setup_RedHat_6.yml - RedHat7系の場合のsetup処理を記載します
-    setup_Debian.yml - Debian系の場合のsetup処理を記載します
+    setup_RedHat_7.yml - RedHat7系の場合のsetup処理を記載します
+    setup_Debian_6.yml - Debian系の場合のsetup処理を記載します
   templates/
     sample.conf.RedHat_6.j2 - 各環境に応じた設定ファイルを設置
-    sample.conf.RedHat_6.j2
+    sample.conf.RedHat_7.j2
   vars/
     main.yml
     RedHat_6.yml - RedHat6系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
     RedHat_7.yml - RedHat7系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
-    Debian.yml - Debian系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
+    Debian_6.yml - Debian系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
 ```
 
 ここではtemplateをコピーしhttpdのrole作成する例を紹介します
 
-- インストールするパッケージを変更
+- インストールするパッケージと操作するサービス名を指定
 ```
-$ roles/httpd/tasks/install_RedHat_6.yml
+$ roles/httpd/vars/RedHat_6.yml
 ---
-- name: Install Package
-  yum:
-    name: httpd
-    state: present
+NAME_SERVICE_MANAGER: Service
+NAME_DAEMON: httpd
+NAME_PACKAGE: httpd
+---
+```
+
+```
+$ roles/httpd/vars/Debian_6.yml
+---
+NAME_PACKAGE: apache2
+NAME_DAEMON: apache2
 ---
 ```
 
@@ -143,22 +141,7 @@ $ roles/httpd/tasks/setup_RedHat_6.yml
     owner: apache
     group: apache
     mode: 0644
-  notify: "Service Reloaded {{ NAME_DAEMON }}"
----
-```
-
-- 操作するサービス名を指定
-```
-$ roles/httpd/vars/RedHat_6.yml
----
-NAME_DAEMON: httpd
----
-```
-
-```
-$ roles/httpd/vars/Debian.yml
----
-NAME_DAEMON: apache2
+  notify: "{{ NAME_SERVICE_MANAGER }} Restarted {{ NAME_DAEMON }}"
 ---
 ```
 
@@ -182,9 +165,9 @@ varsは様々な箇所で記載することができますが、反面適材適�
 - 全てのホストに対して適用: ○
 
 [記載例]
-- 全ての環境にインストールしたいパッケージ ARRAY_COMMON_INSALLED_PACKAGES
-- 全ての環境に作りたいディレクトリ ARRAY_COMMON_MKDIRS
-- 全ての環境に作りたいユーザ ARRAY_COMMON_USERS
+- 全ての環境にインストールしたいパッケージ COMMON_INSALLED_PACKAGES
+- 全ての環境に作りたいディレクトリ COMMON_MKDIRS
+- 全ての環境に作りたいユーザ COMMON_USERS
 ```
 
 #### 優先度低2. group_vars/[HOSTGROUP].yml
@@ -194,8 +177,8 @@ varsは様々な箇所で記載することができますが、反面適材適�
 - 全てのホストに対して適用: ×(特定のホスト群に対して適用)
 
 [記載例]
-- WEBサーバ群に対して適用したいパッケージ ARRAY_HOSTGROUP_INSTALL_PACKAGES
-- WEBサーバ群のApacheのドキュメントルート DIR_HTTPD_DOCUMENT_ROOT
+- WEBサーバ群に対して適用したいパッケージ COMMON_HOSTGROUP_INSTALL_PACKAGES
+- WEBサーバ群のApacheのドキュメントルート HTTPD_SETTINGS.DOCUMENT_ROOT
 ```
 
 #### 優先度低3. inventories/[STAGE]/group_vars/all.yml

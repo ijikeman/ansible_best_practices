@@ -1,0 +1,9 @@
+# COMMON_HOSTGROUP_    
+COMMON_HOSTGROUP_COPY_FILES:
+  - {
+    SRC: 'sample.sh',
+    DEST: '/tmp/sample.sh',
+    OWNER: '0',
+    GROUP: '0',
+    MODE: '0644'
+    }

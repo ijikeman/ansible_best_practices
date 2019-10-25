@@ -1,0 +1,15 @@
+---
+- name: Check State "{{ DAEMON_NAME }}"
+  shell: service {{ DAEMON_NAME }} status
+  register: service_status
+  changed_when: False
+  failed_when: False
+  ignore_errors: True
+  when: not ansible_check_mode
+
+- name: Started "{{ DAEMON_NAME }}"
+  shell: echo "Started {{ DAEMON_NAME }}"
+  notify: Service started {{ DAEMON_NAME }}
+  when:
+    - not ansible_check_mode
+    - service_status.rc != 0

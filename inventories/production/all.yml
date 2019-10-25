@@ -1,0 +1,5 @@
+# INVENTORY_
+INVENTORY_INSTALL_PACKAGES:
+  - {
+    NAME: 'curl'
+    }
