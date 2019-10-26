@@ -1,0 +1,15 @@
+---
+- name: Check Install Package
+  shell: rpm -qi {{ item.PACKAGE_NAME }}
+  register: installed_status
+  changed_when: False
+  failed_when: False
+
+- name: Disabled and Stopped ({{ item.SERVICE_NAME }})
+  service:
+    name: "{{ item.SERVICE_NAME }}"
+    enabled: no
+    state: stopped
+  when:
+    - not ansible_check_mode
+    - installed_status.rc == 0

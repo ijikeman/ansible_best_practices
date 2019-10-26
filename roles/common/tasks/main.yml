@@ -1,0 +1,99 @@
+---
+- include_role:
+     name: common_tasks
+     tasks_from: service_disabled.yml
+  with_items:
+    - "{{ COMMON_DISABLE_SERVICES | default([]) }}"
+    - "{{ COMMON_HOSTGROUP_DISABLE_SERVICES | default([]) }}"
+    - "{{ INVENTORY_DISABLE_SERVICES | default([]) }}"
+    - "{{ INVENTORY_HOSTGROUP_DISABLE_SERVICES | default([]) }}"
+
+- name: Remove Packages
+  yum:
+    name: "{{ item.NAME }}"
+    state: "removed"
+    enablerepo: "{{ item.ENABLEREPO | default([base]) }}"
+  with_items:
+    - "{{ COMMON_REMOVE_PACKAGES | default([]) }}"
+    - "{{ COMMON_HOSTGROUP_REMOVE_PACKAGES | default([]) }}"
+    - "{{ INVENTORY_REMOVE_PACKAGES | default([]) }}"
+    - "{{ INVENTORY_HOSTGROUP_REMOVE_PACKAGES | default([]) }}"
+
+- name: Install Packages
+  yum:
+    name: "{{ item.NAME }}"
+    state: "installed"
+    enablerepo: "{{ item.ENABLEREPO | default([base]) }}"
+  with_items:
+    - "{{ COMMON_INSTALL_PACKAGES | default([]) }}"
+    - "{{ COMMON_HOSTGROUP_INSTALL_PACKAGES | default([]) }}"
+    - "{{ INVENTORY_INSTALL_PACKAGES | default([]) }}"
+    - "{{ INVENTORY_HOSTGROUP_INSTALL_PACKAGES | default([]) }}"
+
+- name: Create New Group
+  group:
+    name: "{{ item.NAME }}"
+    gid: "{{ item.GID }}"
+    state: present
+  with_items:
+    - "{{ COMMON_GROUPS | default([]) }}"
+    - "{{ COMMON_HOSTGROUP_GROUPS | default([]) }}"
+    - "{{ INVENTORY_GROUPS | default([]) }}"
+    - "{{ INVENTORY_HOSTGROUP_GROUPS | default([]) }}"
+
+- name: Create New User
+  user:
+    name: "{{ item.NAME }}"
+    uid: "{{ item.UID }}"
+    state: present
+  with_items:
+    - "{{ COMMON_USERS | default([]) }}"
+    - "{{ COMMON_HOSTGROUP_USERS | default([]) }}"
+    - "{{ INVENTORY_USERS | default([]) }}"
+    - "{{ INVENTORY_HOSTGROUP_USERS | default([]) }}"
+
+- include_role:
+     name: common_tasks
+     tasks_from: mkdir.yml
+  with_items:
+    - "{{ COMMON_MKDIRS | default([]) }}"
+    - "{{ COMMON_HOSTGROUP_MKDIRS | default([]) }}"
+    - "{{ INVENTORY_MKDIRS | default([]) }}"
+    - "{{ INVENTORY_HOSTGROUP_MKDIRS | default([]) }}"
+
+- name: Copy files
+  copy:
+    src: "{{ group_names[0] }}/{{ item.SRC }}"
+    dest: "{{ item.DEST }}"
+    owner: "{{ item.OWNER }}"
+    group: "{{ item.GROUP }}"
+    mode: "{{ item.MODE }}"
+  with_items:
+    - "{{ COMMON_COPY_FILES | default([]) }}"
+    - "{{ COMMON_HOSTGROUP_COPY_FILES | default([]) }}"
+    - "{{ INVENTORY_COPY_FILES | default([]) }}"
+    - "{{ INVENTORY_HOSTGROUP_COPY_FILES | default([]) }}"
+
+- name: Template files
+  template:
+    src: "{{ group_names[0] }}/{{ item.SRC }}"
+    dest: "{{ item.DEST }}"
+    owner: "{{ item.OWNER }}"
+    group: "{{ item.GROUP }}"
+    mode: "{{ item.MODE }}"
+  with_items:
+    - "{{ COMMON_TEMPLATE_FILES | default([]) }}"
+    - "{{ COMMON_HOSTGROUP_TEMPLATE_FILES | default([]) }}"
+    - "{{ INVENTORY_TEMPLATE_FILES | default([]) }}"
+    - "{{ INVENTORY_HOSTGROUP_TEMPLATE_FILES | default([]) }}"
+
+- name: Make Symlinks
+  file:
+    src: "{{ item.SRC }}"
+    path: "{{ item.PATH }}"
+    state: link
+  with_items:
+    - "{{ COMMON_SYMLINKS | default([]) }}"
+    - "{{ COMMON_HOSTGROUP_SYMLINKS | default([]) }}"
+    - "{{ INVENTORY_SYMLINKS | default([]) }}"
+    - "{{ INVENTORY_HOSTGROUP_SYMLINKS | default([]) }}"

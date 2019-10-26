@@ -1,0 +1,7 @@
+---
+- name: sample
+  user: root
+  hosts: sample
+  roles:
+    - common
+    - template_role

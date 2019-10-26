@@ -1,0 +1,4 @@
+---
+- apt:
+    name: "{{ NAME_PACKAGE }}"
+    state: present

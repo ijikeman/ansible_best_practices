@@ -1,0 +1,2 @@
+- name: FLUSH HANDLERS
+  meta: flush_handlers

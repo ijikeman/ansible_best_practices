@@ -1,0 +1,3 @@
+NAME_SERVICE_MANAGER: Systemd
+NAME_DAEMON: sample
+NAME_PACKAGE: sample
