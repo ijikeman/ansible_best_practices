@@ -1,9 +1,9 @@
 ---
 - name: Setup Config
   template:
-    src: sample.conf.j2
-    dest: /tmp/sample.conf
-    owner: 'root'
-    group: 'root'
+    src: 'sample.conf_{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.j2'
+    dest: '/tmp/sample.conf'
+    owner: 0
+    group: 0
     mode: 0644
-  notify: "Service Restarted {{ NAME_DAEMON }}"
+  notify: "{{ NAME_SERVICE_MANAGER }} restarted {{ DAEMON_NAME }}"

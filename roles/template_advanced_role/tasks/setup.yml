@@ -1,3 +1,2 @@
 ---
-- name: Include per 'os_family' and 'distribution_major_version'
-  include: setup_{{ ansible_os_family }}.yml
+- include_tasks: setup_{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"

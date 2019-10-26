@@ -1,22 +1,46 @@
 ---
-- name: Service Started {{ NAME_DAEMON }}
+# If Setup init-scripts
+- name: Service started {{ NAME_DAEMON }}
   service:
     name: "{{ NAME_DAEMON }}"
     state: started
     enabled: yes
 
-- name: Service Restarted {{ NAME_DAEMON }}
+- name: Service restarted {{ NAME_DAEMON }}
   service:
     name: "{{ NAME_DAEMON }}"
     state: restarted
 
-- name: Service Reloaded {{ NAME_DAEMON }}
+- name: Service reloaded {{ NAME_DAEMON }}
   service:
     name: "{{ NAME_DAEMON }}"
     state: reloaded
 
-- name: Service Stopped {{ NAME_DAEMON }}
+- name: Service stopped {{ NAME_DAEMON }}
   service:
+    name: "{{ NAME_DAEMON }}"
+    state: stopped
+    enabled: no
+
+# If Setup Systemd
+- name: Systemd started {{ NAME_DAEMON }}
+  systemd:
+    name: "{{ NAME_DAEMON }}"
+    state: started
+    enabled: yes
+
+- name: Systemd restarted {{ NAME_DAEMON }}
+  systemd:
+    name: "{{ NAME_DAEMON }}"
+    state: restarted
+
+- name: Systemd reloaded {{ NAME_DAEMON }}
+  systemd:
+    name: "{{ NAME_DAEMON }}"
+    state: reloaded
+
+- name: Systemd stopped {{ NAME_DAEMON }}
+  systemd:
     name: "{{ NAME_DAEMON }}"
     state: stopped
     enabled: no
