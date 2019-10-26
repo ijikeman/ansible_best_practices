@@ -21,7 +21,7 @@ roles/
   common_tasks/ - 他のロールから呼ばれる汎用的なタスクリスト
   common/ - 全てのホストで共通で実行するタスク
   [role_name]/ - 各種ロール。フォルダ名はミドルウェア名単位が好ましい
-  template_role/ - テンプレートロール
+  template_basic_role/ - テンプレートロール
     defaults/ - 使わない(上書き可能なデフォルトの値)
     files/ - タスク内で使用するシェルなど
     handlers/ - notifyで呼び出す処理を記載
@@ -165,7 +165,7 @@ varsは様々な箇所で記載することができますが、反面適材適�
 - 全てのホストに対して適用: ○
 
 [記載例]
-- 全ての環境にインストールしたいパッケージ COMMON_INSALLED_PACKAGES
+- 全ての環境にインストールしたいパッケージ COMMON_INSTALLED_PACKAGES
 - 全ての環境に作りたいディレクトリ COMMON_MKDIRS
 - 全ての環境に作りたいユーザ COMMON_USERS
 ```
@@ -177,7 +177,7 @@ varsは様々な箇所で記載することができますが、反面適材適�
 - 全てのホストに対して適用: ×(特定のホスト群に対して適用)
 
 [記載例]
-- WEBサーバ群に対して適用したいパッケージ COMMON_HOSTGROUP_INSTALL_PACKAGES
+- WEBサーバ群に対して適用したいパッケージ COMMON_HOSTGROUP_INSTALLED_PACKAGES
 - WEBサーバ群のApacheのドキュメントルート HTTPD_SETTINGS.DOCUMENT_ROOT
 ```
 
@@ -188,6 +188,7 @@ varsは様々な箇所で記載することができますが、反面適材適�
 - 全てのホストに対して適用: ○
 
 [記載例]
+- 本番環境の全てのサーバに適用したいパッケージ INVENTORY_INSTALLED_PACKAGES
 - ZABBIXサーバのIP IPADDRESS_ZABBIX_SERVER
 ```
 
@@ -198,14 +199,27 @@ varsは様々な箇所で記載することができますが、反面適材適�
 - 全てのホストに対して適用: ×(特定のホスト群に対して適用)
 
 [記載例]
+- 本番環境のWEBのサーバ群に適用したいパッケージ INVENTORY_HOSTGROUP_INSTALLED_PACKAGES
 - ZABBIXサーバのIP IPADDRESS_ZABBIX_SERVER
 ```
 
-#### 優先度低5. ホスト個別の値について
+#### 優先度低5. ホスト個別の値について(WEBサーバ群の中で1ホストだけ環境が違うなど)
 ```
 各ステージ且つ各ホストグループよりもさらに細かい、各ホスト個別の値について方法は複数あるので紹介。
-- 1. Dynamic Inventoryを利用する
-- 2. 各優先度4のvarsファイル内でhashや配列などで管理する
+- 1. ホストグループを分ける
+inventory/production/hosts
 ```
-例:
+[web:children]
+10.0.0.1
+web2
+
+[web2]
+10.0.0.2
 ```
+
+inventory/production/group_vars/web.yml
+inventory/production/group_vars/web1.yml
+を用意すると
+web1.ymlの値が優先される
+
+- 2. Dynamic Inventoryを利用する
