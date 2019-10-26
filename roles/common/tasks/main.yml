@@ -11,7 +11,7 @@
 - name: Remove Packages
   yum:
     name: "{{ item.NAME }}"
-    state: "removed"
+    state: 'removed'
     enablerepo: "{{ item.ENABLEREPO | default([base]) }}"
   with_items:
     - "{{ COMMON_REMOVE_PACKAGES | default([]) }}"
@@ -22,30 +22,40 @@
 - name: Install Packages
   yum:
     name: "{{ item.NAME }}"
-    state: "installed"
-    enablerepo: "{{ item.ENABLEREPO | default([base]) }}"
+    state: 'installed'
+    enablerepo: "{{ item.ENABLEREPO | default('base') }}"
   with_items:
     - "{{ COMMON_INSTALL_PACKAGES | default([]) }}"
     - "{{ COMMON_HOSTGROUP_INSTALL_PACKAGES | default([]) }}"
     - "{{ INVENTORY_INSTALL_PACKAGES | default([]) }}"
     - "{{ INVENTORY_HOSTGROUP_INSTALL_PACKAGES | default([]) }}"
 
-- name: Create New Group
+- name: Manage Groups
   group:
     name: "{{ item.NAME }}"
     gid: "{{ item.GID }}"
-    state: present
-  with_items:
+    local: "{{ item.LOCAL| default('no') }}"
+    non_unique: "{{ item.NON_UNIQUE| default('no') }}"
+    state: "{{ item.STATE| default('present') }}"
+    system: "{{ item.SYSTEM | default('no') }}"
+    with_items:
     - "{{ COMMON_GROUPS | default([]) }}"
     - "{{ COMMON_HOSTGROUP_GROUPS | default([]) }}"
     - "{{ INVENTORY_GROUPS | default([]) }}"
     - "{{ INVENTORY_HOSTGROUP_GROUPS | default([]) }}"
 
-- name: Create New User
+- name: Manage Users
   user:
     name: "{{ item.NAME }}"
     uid: "{{ item.UID }}"
-    state: present
+    group: "{{ item.GROUP | default() }}"
+    shell: "{{ item.SHELL | default('/sbin/nologin') }}"
+    home: "{{ item.HOME | default() }}"
+    create_home: "{{ item.HOME | default('yes') }}"
+    password: "{{ item.PASSWORD | default() }}"
+    comment: "{{ item.COMMENT | default() }}"
+    update_password: "{{ item.UPDATE_PASSWORD | default('always') }}"
+    state: "{{ item.STATE| default('present') }}"
   with_items:
     - "{{ COMMON_USERS | default([]) }}"
     - "{{ COMMON_HOSTGROUP_USERS | default([]) }}"
