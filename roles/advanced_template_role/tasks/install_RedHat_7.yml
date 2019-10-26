@@ -1,0 +1,5 @@
+---
+- yum:
+    name: "{{ NAME_PACKAGE }}"
+    enablerepo: "{{ NAME_ENABLEREPO | default() }}"
+    state: present

@@ -1,0 +1,8 @@
+# COMMON_
+COMMON_MKDIRS:
+  - {
+    PATH: '/tmp/test',
+    OWNER: '0',
+    GROUP: '0',
+    MODE: '0755'
+    }
