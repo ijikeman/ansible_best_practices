@@ -1,0 +1,9 @@
+---
+- name: Setup Config
+  template:
+    src: 'sample.conf.j2'
+    dest: '/tmp/sample.conf'
+    owner: 0
+    group: 0
+    mode: 0644
+  notify: "{{ NAME_SERVICE_MANAGER }} restarted {{ DAEMON_NAME }}"

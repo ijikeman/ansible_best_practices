@@ -1,0 +1,23 @@
+---
+- name: Check State "{{ DAEMON_NAME }}"
+  command: "service {{ DAEMON_NAME }} status"
+  register: service_status
+  changed_when: False
+  failed_when: False
+  when: not ansible_check_mode
+
+# Start if serivce stop(rc != 0)
+- name: Restarted "{{ DAEMON_NAME }}"
+  command: echo "Restarted(started) {{ DAEMON_NAME }}"
+  notify: Service started {{ DAEMON_NAME }}
+  when:
+    - not ansible_check_mode
+    - service_status.rc != 0
+    
+# ReStart if serivce stop(rc == 0)
+- name: Restarted "{{ DAEMON_NAME }}"
+  command: echo "Restarted {{ DAEMON_NAME }}"
+  notify: Service restarted {{ DAEMON_NAME }}
+  when:
+    - not ansible_check_mode
+    - service_status.rc == 0
