@@ -41,7 +41,7 @@ ansible.cfg - Ansible設定ファイル
 
 ### [構成]
 ```
-template_role/
+template_basic_role/
   files/
   handlers/
     main.yml - 起動、停止、再起動、リロードを行うハンドラが実装されています（基本的に変更不要)
@@ -55,7 +55,7 @@ template_role/
 ```
 
 ### [使い方]
-ここではtemplate_roleをコピーしhttpdのrole作成する例を紹介します
+ここではtemplate_basic_roleをコピーしhttpdのrole作成する例を紹介します
 
 - インストールするパッケージと操作するサービス名を指定
 ```
@@ -87,7 +87,7 @@ $ roles/httpd/tasks/setup.yml
 - このテンプレートはDaemonを扱うロールとなります
 
 ```
-advanced_template_role/
+template_advanced_role/
   files/
   handlers/
   tasks/
@@ -110,7 +110,7 @@ advanced_template_role/
     Debian_6.yml - Debian系の場合のデーモン名(サービス名)や設定ファイルの設置場所を記載します
 ```
 
-ここではtemplateをコピーしhttpdのrole作成する例を紹介します
+ここではtemplate_advanced_roleをコピーしhttpdのrole作成する例を紹介します
 
 - インストールするパッケージと操作するサービス名を指定
 ```
