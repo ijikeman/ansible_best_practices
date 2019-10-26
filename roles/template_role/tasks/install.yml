@@ -1,6 +1,0 @@
----
-- name: Install
-  package:
-    name: "{{ NAME_PACKAGE }}"
-    enablerepo: "{{ NAME_ENABLEREPO | default() }}"
-    state: present
