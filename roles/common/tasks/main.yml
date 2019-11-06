@@ -63,9 +63,13 @@
     - "{{ INVENTORY_HOSTGROUP_USERS | default([]) }}"
 
 - name: Manage Make Directory
-  include_role:
-     name: common_tasks
-     tasks_from: mkdir.yml
+  file:
+    state: directory
+    path: "{{ item.PATH }}"
+    owner: "{{ item.OWNER }}"
+    group: "{{ item.GROUP }}"
+    mode: "{{ item.MODE }}"
+    recurse: "{{ item.RECURSE | default('no')}}"
   with_items:
     - "{{ COMMON_MKDIRS | default([]) }}"
     - "{{ COMMON_HOSTGROUP_MKDIRS | default([]) }}"
