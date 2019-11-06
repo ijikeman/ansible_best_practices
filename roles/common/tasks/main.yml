@@ -38,7 +38,7 @@
     non_unique: "{{ item.NON_UNIQUE| default('no') }}"
     state: "{{ item.STATE| default('present') }}"
     system: "{{ item.SYSTEM | default('no') }}"
-    with_items:
+  with_items:
     - "{{ COMMON_GROUPS | default([]) }}"
     - "{{ COMMON_HOSTGROUP_GROUPS | default([]) }}"
     - "{{ INVENTORY_GROUPS | default([]) }}"
@@ -51,7 +51,7 @@
     group: "{{ item.GROUP | default() }}"
     shell: "{{ item.SHELL | default('/sbin/nologin') }}"
     home: "{{ item.HOME | default() }}"
-    create_home: "{{ item.HOME | default('yes') }}"
+    create_home: "{{ item.CREATE_HOME | default('yes') }}"
     password: "{{ item.PASSWORD | default() }}"
     comment: "{{ item.COMMENT | default() }}"
     update_password: "{{ item.UPDATE_PASSWORD | default('always') }}"
