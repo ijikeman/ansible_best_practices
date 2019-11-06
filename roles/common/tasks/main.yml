@@ -74,7 +74,7 @@
 
 - name: Copy files
   copy:
-    src: "{{ group_names[0] }}/{{ item.SRC }}"
+    src: "{{ item.SRC }}"
     dest: "{{ item.DEST }}"
     owner: "{{ item.OWNER }}"
     group: "{{ item.GROUP }}"
@@ -87,7 +87,7 @@
 
 - name: Template files
   template:
-    src: "{{ group_names[0] }}/{{ item.SRC }}"
+    src: "{{ item.SRC }}"
     dest: "{{ item.DEST }}"
     owner: "{{ item.OWNER }}"
     group: "{{ item.GROUP }}"
