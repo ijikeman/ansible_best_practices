@@ -6,4 +6,4 @@
     owner: 0
     group: 0
     mode: 0644
-  notify: "{{ NAME_SERVICE_MANAGER }} restarted {{ DAEMON_NAME }}"
+  notify: "{{ NAME_SERVICE_MANAGER }} restarted {{ NAME_DAEMON }}"

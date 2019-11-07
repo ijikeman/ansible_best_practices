@@ -1,4 +1,5 @@
 ---
-- apt:
+- name: Install
+  apt:
     name: "{{ NAME_PACKAGE }}"
     state: present
